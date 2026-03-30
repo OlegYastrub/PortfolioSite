@@ -61,6 +61,14 @@
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     object-fit: cover; z-index: 0; pointer-events: none;
   }
+  /* ── YouTube/Drive background iframe ── */
+  .hero-iframe-bg {
+    position: absolute; top: 50%; left: 50%;
+    width: 177.78vh; height: 100vh;
+    min-width: 100%; min-height: 56.25vw;
+    transform: translate(-50%, -50%);
+    z-index: 0; pointer-events: none; border: none;
+  }
   .hero-bg-art {
     position: absolute; inset: 0; z-index: 1;
     background:
@@ -110,125 +118,71 @@
   .btn-outline { background: transparent; color: var(--light); border: 1px solid var(--border); }
   .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
 
-  /* VIDEO MODAL */
-  .video-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  /* ── VIDEO MODAL ── */
+  .video-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
   .video-modal-overlay.open { opacity: 1; pointer-events: all; }
-  .video-modal-inner { position: relative; width: min(90vw, 1000px); background: #0a0a0a; border: 1px solid var(--border); box-shadow: 0 0 80px rgba(217,32,32,0.2); transform: scale(0.93); transition: transform 0.3s ease; }
+  .video-modal-inner {
+    position: relative; width: min(90vw, 1000px);
+    background: #0a0a0a; border: 1px solid var(--border);
+    box-shadow: 0 0 80px rgba(217,32,32,0.2);
+    transform: scale(0.93); transition: transform 0.3s ease;
+  }
   .video-modal-overlay.open .video-modal-inner { transform: scale(1); }
   .video-modal-inner::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dim), transparent); }
-  .video-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+  .video-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+  }
   .video-modal-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); }
   .video-modal-title em { color: var(--red); font-style: normal; }
   .modal-close { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1.3rem; line-height: 1; transition: color 0.2s; padding: 4px 8px; border-radius: 2px; }
   .modal-close:hover { color: var(--red); }
+  /* video wrapper — одинаковый для <video> и <iframe> */
   .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden; }
-  .video-modal-body video { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .video-modal-body video,
+  .video-modal-body iframe {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    border: none; display: block;
+  }
   .modal-esc-hint { padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--gray); text-align: right; }
 
-  /* ===================== LIGHTBOX ===================== */
+  /* ── LIGHTBOX ── */
   .lightbox {
     position: fixed; inset: 0; z-index: 1100;
-    background: rgba(0,0,0,0.96);
-    backdrop-filter: blur(20px);
+    background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
     display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
   .lightbox.open { opacity: 1; pointer-events: all; }
-
-  /* top bar */
-  .lb-bar {
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--red), var(--red-dim), transparent);
-  }
-  .lb-header {
-    position: absolute; top: 0; left: 0; right: 0;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 24px;
-  }
-  .lb-counter {
-    font-family: 'Outfit', sans-serif; font-size: 0.68rem; font-weight: 700;
-    letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray);
-  }
+  .lb-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dim), transparent); }
+  .lb-header { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
+  .lb-counter { font-family: 'Outfit', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); }
   .lb-counter em { color: var(--red); font-style: normal; }
-  .lb-close {
-    background: none; border: 1px solid var(--border); cursor: pointer;
-    color: var(--gray); font-size: 1rem; line-height: 1;
-    transition: all 0.2s; padding: 6px 12px; border-radius: 2px;
-    font-family: 'Outfit', sans-serif; font-weight: 600;
-    letter-spacing: 0.08em;
-  }
+  .lb-close { background: none; border: 1px solid var(--border); cursor: pointer; color: var(--gray); font-size: 1rem; line-height: 1; transition: all 0.2s; padding: 6px 12px; border-radius: 2px; font-family: 'Outfit', sans-serif; font-weight: 600; letter-spacing: 0.08em; }
   .lb-close:hover { border-color: var(--red); color: var(--red); }
-
-  /* image area */
-  .lb-stage {
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-    width: 100%; height: 100%;
-    padding: 80px 100px;
-  }
-  .lb-img {
-    max-width: 100%; max-height: 100%;
-    object-fit: contain;
-    border: 1px solid var(--border);
-    box-shadow: 0 0 60px rgba(217,32,32,0.12), 0 40px 80px rgba(0,0,0,0.8);
-    opacity: 0;
-    transform: scale(0.96);
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    display: block;
-    border-radius: 1px;
-  }
+  .lb-stage { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 80px 100px; }
+  .lb-img { max-width: 100%; max-height: 100%; object-fit: contain; border: 1px solid var(--border); box-shadow: 0 0 60px rgba(217,32,32,0.12), 0 40px 80px rgba(0,0,0,0.8); opacity: 0; transform: scale(0.96); transition: opacity 0.25s ease, transform 0.25s ease; display: block; border-radius: 1px; }
   .lb-img.visible { opacity: 1; transform: scale(1); }
-
-  /* nav arrows */
-  .lb-arrow {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(8,8,8,0.7); border: 1px solid var(--border);
-    color: var(--gray); font-size: 1.2rem; cursor: pointer;
-    width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; border-radius: 2px;
-    z-index: 2;
-  }
+  .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(8,8,8,0.7); border: 1px solid var(--border); color: var(--gray); font-size: 1.2rem; cursor: pointer; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border-radius: 2px; z-index: 2; }
   .lb-arrow:hover { border-color: var(--red); color: var(--red); background: rgba(217,32,32,0.08); }
   .lb-arrow.prev { left: 20px; }
   .lb-arrow.next { right: 20px; }
   .lb-arrow:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
-
-  /* dots */
-  .lb-dots {
-    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; align-items: center;
-  }
-  .lb-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gray); border: none; cursor: pointer;
-    padding: 0; transition: all 0.2s;
-  }
+  .lb-dots { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; }
+  .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gray); border: none; cursor: pointer; padding: 0; transition: all 0.2s; }
   .lb-dot.active { background: var(--red); width: 20px; border-radius: 3px; }
   .lb-dot:hover:not(.active) { background: var(--light); }
+  .lb-hint { position: absolute; bottom: 24px; right: 24px; font-family: 'Outfit', sans-serif; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); }
 
-  /* zoom hint */
-  .lb-hint {
-    position: absolute; bottom: 24px; right: 24px;
-    font-family: 'Outfit', sans-serif; font-size: 0.6rem;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray);
-  }
-
-  /* cursor on screen items */
   .screen-item { cursor: zoom-in !important; }
-
-  /* zoom icon overlay on hover */
-  .screen-item .zoom-icon {
-    position: absolute; inset: 0; z-index: 4;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.25s;
-    background: rgba(0,0,0,0.35);
-    pointer-events: none;
-  }
+  .screen-item .zoom-icon { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s; background: rgba(0,0,0,0.35); pointer-events: none; }
   .screen-item:hover .zoom-icon { opacity: 1; }
   .zoom-icon svg { width: 32px; height: 32px; stroke: var(--white); opacity: 0.85; }
-  /* ==================== END LIGHTBOX ==================== */
 
   .page-body { max-width: 1200px; margin: 0 auto; padding: 0 6vw 96px; }
   .section-block { padding: 72px 0; border-top: 1px solid var(--border); }
@@ -265,13 +219,7 @@
   .feature-desc { font-size: 0.81rem; color: var(--gray); line-height: 1.7; }
 
   .screens-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
-  .screen-item {
-    aspect-ratio: 16/10;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s;
-    z-index: 1;
-  }
+  .screen-item { aspect-ratio: 16/10; position: relative; overflow: hidden; transition: transform 0.3s; z-index: 1; }
   .screen-item:hover { transform: scale(1.03); z-index: 2; }
 
   .s1 { background: linear-gradient(135deg, #1c0808, #0d0505); }
@@ -281,30 +229,11 @@
   .s5 { background: linear-gradient(135deg, #080808, #140808); }
   .s6 { background: linear-gradient(135deg, #0d0808, #1a0a0a); }
 
-  .screen-placeholder {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1;
-    transition: opacity 0.35s ease;
-  }
-  .screen-img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    z-index: 2;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
+  .screen-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transition: opacity 0.35s ease; }
+  .screen-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; opacity: 0; transition: opacity 0.4s ease; }
   .screen-img.loaded { opacity: 1; }
   .screen-item.has-img .screen-placeholder { opacity: 0; }
-  .screen-label {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 8px 12px; z-index: 3;
-    font-family: 'Outfit', sans-serif; font-size: 0.62rem; font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray);
-    background: linear-gradient(0deg, rgba(8,8,8,0.9) 0%, transparent 100%);
-    text-align: center;
-  }
+  .screen-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 12px; z-index: 3; font-family: 'Outfit', sans-serif; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); background: linear-gradient(0deg, rgba(8,8,8,0.9) 0%, transparent 100%); text-align: center; }
 
   .ac { width: 48px; height: 48px; border: 2px solid rgba(217,32,32,0.5); transform: rotate(45deg); animation: cubeR 4s linear infinite; position: relative; }
   .ac::before { content:''; position:absolute; inset:11px; border:2px solid rgba(217,32,32,0.2); }
@@ -385,6 +314,33 @@
 </head>
 <body>
 
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  НАЛАШТУВАННЯ ВІДЕО                                              ║
+  ║                                                                  ║
+  ║  Змінна VIDEO_SOURCE нижче — вкажи своє відео одним із варіантів:
+  ║                                                                  ║
+  ║  1) Локальний файл:                                              ║
+  ║     type: 'local'                                                ║
+  ║     src:  'Video/Chrono.mp4'   (відносний шлях)                  ║
+  ║                                                                  ║
+  ║  2) YouTube:                                                     ║
+  ║     type: 'youtube'                                              ║
+  ║     src:  'dQw4w9WgXcQ'        (тільки ID після ?v=)             ║
+  ║                                                                  ║
+  ║  3) Google Drive:                                                ║
+  ║     type: 'gdrive'                                               ║
+  ║     src:  '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs'  (ID файлу)       ║
+  ║     Файл має бути з доступом "Усі, хто має посилання"            ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<script>
+  const VIDEO_SOURCE = {
+    type: 'youtube',       // 'local' | 'youtube' | 'gdrive'
+    src:  'https://youtu.be/_Vw1coHl1_c?si=B_sl2QfUVQfbWydW'
+  };
+</script>
+
 <!-- VIDEO MODAL -->
 <div class="video-modal-overlay" id="videoModal">
   <div class="video-modal-inner">
@@ -392,10 +348,8 @@
       <div class="video-modal-title">Chrono <em>Guardians</em> — Геймплей відео</div>
       <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
     </div>
-    <div class="video-modal-body">
-      <video id="modalVideo" controls preload="none">
-        <source src="/ChronoGuardians/Video/Chrono.mp4" type="video/mp4">
-      </video>
+    <div class="video-modal-body" id="videoModalBody">
+      <!-- заповнюється JS залежно від VIDEO_SOURCE.type -->
     </div>
     <div class="modal-esc-hint">ESC — закрити</div>
   </div>
@@ -418,14 +372,17 @@
 </div>
 
 <nav>
-  <a href="/index.html" class="nav-logo">UNITY<em>.</em>DEV</a>
-  <a href="/index.html#projects" class="nav-back"><span class="arr">←</span> Всі проєкти</a>
+  <a href="../index.html" class="nav-logo">UNITY<em>.</em>DEV</a>
+  <a href="../index.html#projects" class="nav-back"><span class="arr">←</span> Всі проєкти</a>
 </nav>
 
-<div class="project-hero">
-  <video class="hero-video-bg" autoplay muted loop playsinline>
-    <source src="/ChronoGuardians/Video/Chrono.mp4" type="video/mp4">
-  </video>
+<div class="project-hero" id="projectHero">
+  <!--
+    Фонове відео для hero заповнюється JS:
+    - локальний файл → <video autoplay muted loop>
+    - YouTube → <iframe> з autoplay=1&mute=1&loop=1&controls=0
+    - Google Drive → фон не підтримує autoplay, буде просто dark bg
+  -->
   <div class="hero-bg-art"></div>
   <div class="hero-grid"></div>
   <div class="hero-glow-1"></div>
@@ -437,8 +394,8 @@
   </div>
   <div class="hero-content">
     <div class="breadcrumb">
-      <a href="/index.html">Портфоліо</a><span class="sep">/</span>
-      <a href="/index.html#projects">Проєкти</a><span class="sep">/</span>
+      <a href="../index.html">Портфоліо</a><span class="sep">/</span>
+      <a href="../index.html#projects">Проєкти</a><span class="sep">/</span>
       Chrono Guardians
     </div>
     <div class="project-badge-hero">2D Mobile Game</div>
@@ -514,6 +471,18 @@
   </div>
 
   <!-- SCREENSHOTS -->
+  <!--
+    ════════════════════════════════════════════════════════════
+    ШЛЯХИ ДО ЗОБРАЖЕНЬ
+    ════════════════════════════════════════════════════════════
+    GitHub Pages: файл лежить в   /ChronoGuardians/index.html
+                  зображення в   /ChronoGuardians/Images/
+
+    → використовуй ВІДНОСНІ шляхи: Images/GamePlay1.jpg
+      НЕ абсолютні: /ChronoGuardians/Images/GamePlay1.jpg
+      (абсолютний шлях ламається якщо репо не в корені)
+    ════════════════════════════════════════════════════════════
+  -->
   <div class="section-block">
     <div class="eyebrow">Візуали</div>
     <h2 class="block-title">Скриншоти<span class="title-bar"></span></h2>
@@ -539,12 +508,12 @@
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
 
-      <div class="screen-item s5" data-img="/ChronoGuardians/Images/Shop.png">
+      <div class="screen-item s5" data-img="Images/Shop.png">
         <div class="screen-placeholder"><div class="ah">🛡️</div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
 
-      <div class="screen-item s6" data-img="/ChronoGuardians/Images/Settings.png">
+      <div class="screen-item s6" data-img="Images/Settings.png">
         <div class="screen-placeholder"><div class="ac" style="border-color:rgba(200,170,50,0.5)"></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
@@ -606,7 +575,7 @@
 </div>
 
 <div class="bottom-nav">
-  <a href="/index.html#projects" class="bnav-item">
+  <a href="../index.html#projects" class="bnav-item">
     <span class="bnav-arr">←</span>
     <div><div class="bnav-label">Назад</div><div class="bnav-title">Всі проєкти</div></div>
   </a>
@@ -621,129 +590,226 @@
 </footer>
 
 <script>
-  /* ── Scroll reveal ── */
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.06 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+/* ══════════════════════════════════════════════════
+   УТИЛІТА: розбір посилання на відео
+   Підтримує:
+     YouTube:  https://youtu.be/ID
+               https://www.youtube.com/watch?v=ID
+               https://www.youtube.com/embed/ID
+               просто ID (11 символів)
+     GDrive:   https://drive.google.com/file/d/ID/view
+               https://drive.google.com/open?id=ID
+               просто ID
+   ══════════════════════════════════════════════════ */
+function parseVideoSource(cfg) {
+  const { type, src } = cfg;
+  if (type === 'local') {
+    return { kind: 'local', url: src };
+  }
+  if (type === 'youtube') {
+    let id = src;
+    const m = src.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+    if (m) id = m[1];
+    return {
+      kind: 'youtube',
+      embedUrl: `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0`,
+      modalUrl:  `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
+    };
+  }
+  if (type === 'gdrive') {
+    let id = src;
+    const m = src.match(/\/d\/([^/]+)/) || src.match(/id=([^&]+)/);
+    if (m) id = m[1];
+    return {
+      kind: 'gdrive',
+      // Google Drive не підтримує autoplay у фоні, тому hero bg не показуємо
+      modalUrl: `https://drive.google.com/file/d/${id}/preview`
+    };
+  }
+  return null;
+}
 
-  /* ── Video Modal ── */
-  const videoOverlay = document.getElementById('videoModal');
-  const modalVideo   = document.getElementById('modalVideo');
-  const openVideoBtn = document.getElementById('openVideoBtn');
-  const modalClose   = document.getElementById('modalClose');
+const vidInfo = parseVideoSource(VIDEO_SOURCE);
 
-  function openVideoModal()  { videoOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; modalVideo.play().catch(() => {}); }
-  function closeVideoModal() { videoOverlay.classList.remove('open'); document.body.style.overflow = ''; modalVideo.pause(); modalVideo.currentTime = 0; }
+/* ── Hero background ── */
+const hero = document.getElementById('projectHero');
+if (vidInfo) {
+  if (vidInfo.kind === 'local') {
+    const v = document.createElement('video');
+    v.className = 'hero-video-bg';
+    v.autoplay = true; v.muted = true; v.loop = true; v.playsInline = true;
+    const s = document.createElement('source');
+    s.src = vidInfo.url; s.type = 'video/mp4';
+    v.appendChild(s);
+    hero.insertBefore(v, hero.firstChild);
+  } else if (vidInfo.kind === 'youtube') {
+    // YouTube autoplay у фоні: додаємо iframe
+    const f = document.createElement('iframe');
+    f.className = 'hero-iframe-bg';
+    f.src = vidInfo.embedUrl;
+    f.allow = 'autoplay; encrypted-media';
+    f.setAttribute('allowfullscreen', '');
+    hero.insertBefore(f, hero.firstChild);
+  }
+  // gdrive — не підтримує autoplay-embed у фоні, просто тёмний фон
+}
 
-  openVideoBtn.addEventListener('click', openVideoModal);
-  modalClose.addEventListener('click', closeVideoModal);
-  videoOverlay.addEventListener('click', e => { if (e.target === videoOverlay) closeVideoModal(); });
+/* ── Наповнення модального вікна ── */
+const videoModalBody = document.getElementById('videoModalBody');
+let modalVideoEl   = null;  // <video> для локального файлу
+let modalIframeEl  = null;  // <iframe> для YT / GDrive
 
-  /* ── Screen images + lightbox data ── */
-  const lightboxImages = []; // { src, index }
+function buildModalContent() {
+  videoModalBody.innerHTML = '';
+  if (!vidInfo) return;
+  if (vidInfo.kind === 'local') {
+    const v = document.createElement('video');
+    v.controls = true; v.preload = 'none';
+    const s = document.createElement('source');
+    s.src = vidInfo.url; s.type = 'video/mp4';
+    v.appendChild(s);
+    modalVideoEl = v;
+    videoModalBody.appendChild(v);
+  } else {
+    const f = document.createElement('iframe');
+    f.src = '';  // заповниться при відкритті
+    f.allow = 'autoplay; fullscreen; encrypted-media';
+    f.setAttribute('allowfullscreen', '');
+    modalIframeEl = f;
+    videoModalBody.appendChild(f);
+  }
+}
+buildModalContent();
 
-  document.querySelectorAll('.screen-item[data-img]').forEach((item, idx) => {
-    const src = (item.getAttribute('data-img') || '').trim();
-    if (!src) return;
+/* ── Відкриття / закриття модалки ── */
+const videoOverlay = document.getElementById('videoModal');
 
-    lightboxImages.push({ src, el: item });
+function openVideoModal() {
+  videoOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (vidInfo && vidInfo.kind === 'local' && modalVideoEl) {
+    modalVideoEl.play().catch(() => {});
+  } else if (modalIframeEl) {
+    modalIframeEl.src = vidInfo.modalUrl;
+  }
+}
+function closeVideoModal() {
+  videoOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+  if (vidInfo && vidInfo.kind === 'local' && modalVideoEl) {
+    modalVideoEl.pause();
+    modalVideoEl.currentTime = 0;
+  } else if (modalIframeEl) {
+    // Зупиняємо відтворення, скидаючи src
+    modalIframeEl.src = '';
+  }
+}
 
-    const img = new Image();
-    img.className = 'screen-img';
-    img.alt = '';
-    img.onload  = () => { img.classList.add('loaded'); item.classList.add('has-img'); };
-    img.onerror = () => { img.remove(); };
-    const label = item.querySelector('.screen-label');
-    item.insertBefore(img, label || null);
-    img.src = src;
+document.getElementById('openVideoBtn').addEventListener('click', openVideoModal);
+document.getElementById('modalClose').addEventListener('click', closeVideoModal);
+videoOverlay.addEventListener('click', e => { if (e.target === videoOverlay) closeVideoModal(); });
 
-    // click → open lightbox
-    item.addEventListener('click', () => openLightbox(idx));
+/* ── Scroll reveal ── */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── Screen images + lightbox data ── */
+const lightboxImages = [];
+
+document.querySelectorAll('.screen-item[data-img]').forEach((item, idx) => {
+  const src = (item.getAttribute('data-img') || '').trim();
+  if (!src) return;
+  lightboxImages.push({ src, el: item });
+  const img = new Image();
+  img.className = 'screen-img';
+  img.alt = '';
+  img.onload  = () => { img.classList.add('loaded'); item.classList.add('has-img'); };
+  img.onerror = () => { img.remove(); };
+  const label = item.querySelector('.screen-label');
+  item.insertBefore(img, label || null);
+  img.src = src;
+  item.addEventListener('click', () => openLightbox(idx));
+});
+
+/* ── Lightbox ── */
+const lb        = document.getElementById('lightbox');
+const lbImg     = document.getElementById('lbImg');
+const lbCurrent = document.getElementById('lbCurrent');
+const lbTotal   = document.getElementById('lbTotal');
+const lbDotsEl  = document.getElementById('lbDots');
+const lbPrev    = document.getElementById('lbPrev');
+const lbNext    = document.getElementById('lbNext');
+const lbClose   = document.getElementById('lbClose');
+const lbStage   = document.getElementById('lbStage');
+let lbIndex = 0;
+
+function buildDots() {
+  lbDotsEl.innerHTML = '';
+  lbTotal.textContent = lightboxImages.length;
+  lightboxImages.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'lb-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', `Фото ${i + 1}`);
+    d.addEventListener('click', () => goTo(i));
+    lbDotsEl.appendChild(d);
   });
+}
+function updateDots() {
+  lbDotsEl.querySelectorAll('.lb-dot').forEach((d, i) => d.classList.toggle('active', i === lbIndex));
+}
+function goTo(idx) {
+  lbIndex = idx;
+  lbImg.classList.remove('visible');
+  setTimeout(() => {
+    lbImg.src = lightboxImages[lbIndex].src;
+    lbImg.onload = () => lbImg.classList.add('visible');
+    lbImg.onerror = () => lbImg.classList.add('visible');
+    lbCurrent.textContent = lbIndex + 1;
+    lbPrev.disabled = lbIndex === 0;
+    lbNext.disabled = lbIndex === lightboxImages.length - 1;
+    updateDots();
+  }, 180);
+}
+function openLightbox(idx) {
+  if (lightboxImages.length === 0) return;
+  buildDots();
+  lbIndex = idx;
+  lbImg.src = '';
+  lbImg.classList.remove('visible');
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    lbImg.src = lightboxImages[lbIndex].src;
+    lbImg.onload  = () => lbImg.classList.add('visible');
+    lbImg.onerror = () => lbImg.classList.add('visible');
+    lbCurrent.textContent = lbIndex + 1;
+    lbPrev.disabled = lbIndex === 0;
+    lbNext.disabled = lbIndex === lightboxImages.length - 1;
+    updateDots();
+  }, 40);
+}
+function closeLightbox() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => { lbImg.src = ''; lbImg.classList.remove('visible'); }, 300);
+}
 
-  /* ── Lightbox ── */
-  const lb        = document.getElementById('lightbox');
-  const lbImg     = document.getElementById('lbImg');
-  const lbCurrent = document.getElementById('lbCurrent');
-  const lbTotal   = document.getElementById('lbTotal');
-  const lbDotsEl  = document.getElementById('lbDots');
-  const lbPrev    = document.getElementById('lbPrev');
-  const lbNext    = document.getElementById('lbNext');
-  const lbClose   = document.getElementById('lbClose');
-  const lbStage   = document.getElementById('lbStage');
+lbClose.addEventListener('click', closeLightbox);
+lb.addEventListener('click', e => { if (e.target === lb || e.target === lbStage) closeLightbox(); });
+lbPrev.addEventListener('click', e => { e.stopPropagation(); if (lbIndex > 0) goTo(lbIndex - 1); });
+lbNext.addEventListener('click', e => { e.stopPropagation(); if (lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1); });
 
-  let lbIndex = 0;
-
-  function buildDots() {
-    lbDotsEl.innerHTML = '';
-    lbTotal.textContent = lightboxImages.length;
-    lightboxImages.forEach((_, i) => {
-      const d = document.createElement('button');
-      d.className = 'lb-dot' + (i === 0 ? ' active' : '');
-      d.setAttribute('aria-label', `Фото ${i + 1}`);
-      d.addEventListener('click', () => goTo(i));
-      lbDotsEl.appendChild(d);
-    });
+document.addEventListener('keydown', e => {
+  if (lb.classList.contains('open')) {
+    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'ArrowLeft'  && lbIndex > 0)                         goTo(lbIndex - 1);
+    if (e.key === 'ArrowRight' && lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1);
+    return;
   }
-
-  function updateDots() {
-    lbDotsEl.querySelectorAll('.lb-dot').forEach((d, i) => d.classList.toggle('active', i === lbIndex));
-  }
-
-  function goTo(idx) {
-    lbIndex = idx;
-    lbImg.classList.remove('visible');
-    setTimeout(() => {
-      lbImg.src = lightboxImages[lbIndex].src;
-      lbImg.onload = () => lbImg.classList.add('visible');
-      lbImg.onerror = () => lbImg.classList.add('visible');
-      lbCurrent.textContent = lbIndex + 1;
-      lbPrev.disabled = lbIndex === 0;
-      lbNext.disabled = lbIndex === lightboxImages.length - 1;
-      updateDots();
-    }, 180);
-  }
-
-  function openLightbox(idx) {
-    if (lightboxImages.length === 0) return;
-    buildDots();
-    lbIndex = idx;
-    lbImg.src = '';
-    lbImg.classList.remove('visible');
-    lb.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => {
-      lbImg.src = lightboxImages[lbIndex].src;
-      lbImg.onload  = () => lbImg.classList.add('visible');
-      lbImg.onerror = () => lbImg.classList.add('visible');
-      lbCurrent.textContent = lbIndex + 1;
-      lbPrev.disabled = lbIndex === 0;
-      lbNext.disabled = lbIndex === lightboxImages.length - 1;
-      updateDots();
-    }, 40);
-  }
-
-  function closeLightbox() {
-    lb.classList.remove('open');
-    document.body.style.overflow = '';
-    setTimeout(() => { lbImg.src = ''; lbImg.classList.remove('visible'); }, 300);
-  }
-
-  lbClose.addEventListener('click', closeLightbox);
-  lb.addEventListener('click', e => { if (e.target === lb || e.target === lbStage) closeLightbox(); });
-  lbPrev.addEventListener('click', e => { e.stopPropagation(); if (lbIndex > 0) goTo(lbIndex - 1); });
-  lbNext.addEventListener('click', e => { e.stopPropagation(); if (lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1); });
-
-  document.addEventListener('keydown', e => {
-    if (lb.classList.contains('open')) {
-      if (e.key === 'Escape')      closeLightbox();
-      if (e.key === 'ArrowLeft'  && lbIndex > 0)                          goTo(lbIndex - 1);
-      if (e.key === 'ArrowRight' && lbIndex < lightboxImages.length - 1)  goTo(lbIndex + 1);
-      return;
-    }
-    if (videoOverlay.classList.contains('open') && e.key === 'Escape') closeVideoModal();
-  });
+  if (videoOverlay.classList.contains('open') && e.key === 'Escape') closeVideoModal();
+});
 </script>
 </body>
 </html>
