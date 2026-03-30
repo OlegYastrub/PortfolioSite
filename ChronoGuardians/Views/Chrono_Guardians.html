@@ -61,7 +61,6 @@
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     object-fit: cover; z-index: 0; pointer-events: none;
   }
-  /* ── YouTube/Drive background iframe ── */
   .hero-iframe-bg {
     position: absolute; top: 50%; left: 50%;
     width: 177.78vh; height: 100vh;
@@ -118,7 +117,6 @@
   .btn-outline { background: transparent; color: var(--light); border: 1px solid var(--border); }
   .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
 
-  /* ── VIDEO MODAL ── */
   .video-modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.92);
     backdrop-filter: blur(12px); z-index: 1000;
@@ -142,16 +140,11 @@
   .video-modal-title em { color: var(--red); font-style: normal; }
   .modal-close { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1.3rem; line-height: 1; transition: color 0.2s; padding: 4px 8px; border-radius: 2px; }
   .modal-close:hover { color: var(--red); }
-  /* video wrapper — одинаковый для <video> и <iframe> */
   .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden; }
   .video-modal-body video,
-  .video-modal-body iframe {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    border: none; display: block;
-  }
+  .video-modal-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
   .modal-esc-hint { padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--gray); text-align: right; }
 
-  /* ── LIGHTBOX ── */
   .lightbox {
     position: fixed; inset: 0; z-index: 1100;
     background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
@@ -221,14 +214,12 @@
   .screens-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
   .screen-item { aspect-ratio: 16/10; position: relative; overflow: hidden; transition: transform 0.3s; z-index: 1; }
   .screen-item:hover { transform: scale(1.03); z-index: 2; }
-
   .s1 { background: linear-gradient(135deg, #1c0808, #0d0505); }
   .s2 { background: linear-gradient(135deg, #0d0808, #1c0b08); }
   .s3 { background: linear-gradient(135deg, #080d0d, #08100d); }
   .s4 { background: linear-gradient(135deg, #0d0808, #0d0d0d); }
   .s5 { background: linear-gradient(135deg, #080808, #140808); }
   .s6 { background: linear-gradient(135deg, #0d0808, #1a0a0a); }
-
   .screen-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transition: opacity 0.35s ease; }
   .screen-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; opacity: 0; transition: opacity 0.4s ease; }
   .screen-img.loaded { opacity: 1; }
@@ -316,27 +307,22 @@
 
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
-  ║  НАЛАШТУВАННЯ ВІДЕО                                              ║
+  ║  НАЛАШТУВАННЯ ВІДЕО — міняй тільки тут                          ║
   ║                                                                  ║
-  ║  Змінна VIDEO_SOURCE нижче — вкажи своє відео одним із варіантів:
+  ║  Локальний файл:                                                 ║
+  ║    type: 'local',  src: 'Video/Chrono.mp4'                       ║
   ║                                                                  ║
-  ║  1) Локальний файл:                                              ║
-  ║     type: 'local'                                                ║
-  ║     src:  'Video/Chrono.mp4'   (відносний шлях)                  ║
+  ║  YouTube (будь-який формат посилання або просто ID):             ║
+  ║    type: 'youtube', src: 'https://youtu.be/_Vw1coHl1_c'         ║
+  ║    type: 'youtube', src: '_Vw1coHl1_c'                          ║
   ║                                                                  ║
-  ║  2) YouTube:                                                     ║
-  ║     type: 'youtube'                                              ║
-  ║     src:  'dQw4w9WgXcQ'        (тільки ID після ?v=)             ║
-  ║                                                                  ║
-  ║  3) Google Drive:                                                ║
-  ║     type: 'gdrive'                                               ║
-  ║     src:  '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs'  (ID файлу)       ║
-  ║     Файл має бути з доступом "Усі, хто має посилання"            ║
+  ║  Google Drive (файл має бути "Всім, хто має посилання"):         ║
+  ║    type: 'gdrive',  src: 'https://drive.google.com/file/d/ID/view'
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <script>
   const VIDEO_SOURCE = {
-    type: 'youtube',       // 'local' | 'youtube' | 'gdrive'
+    type: 'youtube',
     src:  'https://youtu.be/_Vw1coHl1_c?si=B_sl2QfUVQfbWydW'
   };
 </script>
@@ -348,9 +334,7 @@
       <div class="video-modal-title">Chrono <em>Guardians</em> — Геймплей відео</div>
       <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
     </div>
-    <div class="video-modal-body" id="videoModalBody">
-      <!-- заповнюється JS залежно від VIDEO_SOURCE.type -->
-    </div>
+    <div class="video-modal-body" id="videoModalBody"></div>
     <div class="modal-esc-hint">ESC — закрити</div>
   </div>
 </div>
@@ -372,17 +356,11 @@
 </div>
 
 <nav>
-  <a href="../index.html" class="nav-logo">UNITY<em>.</em>DEV</a>
-  <a href="../index.html#projects" class="nav-back"><span class="arr">←</span> Всі проєкти</a>
+  <a href="../../index.html" class="nav-logo">UNITY<em>.</em>DEV</a>
+  <a href="../../index.html#projects" class="nav-back"><span class="arr">←</span> Всі проєкти</a>
 </nav>
 
 <div class="project-hero" id="projectHero">
-  <!--
-    Фонове відео для hero заповнюється JS:
-    - локальний файл → <video autoplay muted loop>
-    - YouTube → <iframe> з autoplay=1&mute=1&loop=1&controls=0
-    - Google Drive → фон не підтримує autoplay, буде просто dark bg
-  -->
   <div class="hero-bg-art"></div>
   <div class="hero-grid"></div>
   <div class="hero-glow-1"></div>
@@ -394,8 +372,8 @@
   </div>
   <div class="hero-content">
     <div class="breadcrumb">
-      <a href="../index.html">Портфоліо</a><span class="sep">/</span>
-      <a href="../index.html#projects">Проєкти</a><span class="sep">/</span>
+      <a href="../../index.html">Портфоліо</a><span class="sep">/</span>
+      <a href="../../index.html#projects">Проєкти</a><span class="sep">/</span>
       Chrono Guardians
     </div>
     <div class="project-badge-hero">2D Mobile Game</div>
@@ -470,54 +448,39 @@
     </div>
   </div>
 
-  <!-- SCREENSHOTS -->
-  <!--
-    ════════════════════════════════════════════════════════════
-    ШЛЯХИ ДО ЗОБРАЖЕНЬ
-    ════════════════════════════════════════════════════════════
-    GitHub Pages: файл лежить в   /ChronoGuardians/index.html
-                  зображення в   /ChronoGuardians/Images/
-
-    → використовуй ВІДНОСНІ шляхи: Images/GamePlay1.jpg
-      НЕ абсолютні: /ChronoGuardians/Images/GamePlay1.jpg
-      (абсолютний шлях ламається якщо репо не в корені)
-    ════════════════════════════════════════════════════════════
-  -->
   <div class="section-block">
     <div class="eyebrow">Візуали</div>
     <h2 class="block-title">Скриншоти<span class="title-bar"></span></h2>
+    <!--
+      УВАГА: всі шляхи — ВІДНОСНІ від цього HTML-файлу.
+      Якщо файл лежить у /ChronoGuardians/index.html,
+      то зображення мають бути в /ChronoGuardians/Images/
+    -->
     <div class="screens-grid reveal">
-
-      <div class="screen-item s1" data-img="/ChronoGuardians/Images/GamePlay1.jpg">
+      <div class="screen-item s1" data-img="../Images/GamePlay1.jpg">
         <div class="screen-placeholder"><div class="ac"></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
-      <div class="screen-item s2" data-img="/ChronoGuardians/Images/GamePlay2.jpg">
+      <div class="screen-item s2" data-img="../Images/GamePlay2.jpg">
         <div class="screen-placeholder"><div class="ar"><div></div><div></div><div></div></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
-      <div class="screen-item s3" data-img="/ChronoGuardians/Images/LevelMenu.jpg">
+      <div class="screen-item s3" data-img="../Images/LevelMenu.jpg">
         <div class="screen-placeholder"><div class="ap"><span></span><span></span><span></span><span></span><span></span></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
-      <div class="screen-item s4" data-img="/ChronoGuardians/Images/Rewards.png">
+      <div class="screen-item s4" data-img="../Images/Rewards.png">
         <div class="screen-placeholder"><div class="ad"></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
-      <div class="screen-item s5" data-img="Images/Shop.png">
+      <div class="screen-item s5" data-img="../Images/Shop.png">
         <div class="screen-placeholder"><div class="ah">🛡️</div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
-      <div class="screen-item s6" data-img="Images/Settings.png">
+      <div class="screen-item s6" data-img="../Images/Settings.png">
         <div class="screen-placeholder"><div class="ac" style="border-color:rgba(200,170,50,0.5)"></div></div>
         <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
       </div>
-
     </div>
   </div>
 
@@ -575,7 +538,7 @@
 </div>
 
 <div class="bottom-nav">
-  <a href="../index.html#projects" class="bnav-item">
+  <a href="../../index.html#projects" class="bnav-item">
     <span class="bnav-arr">←</span>
     <div><div class="bnav-label">Назад</div><div class="bnav-title">Всі проєкти</div></div>
   </a>
@@ -590,48 +553,47 @@
 </footer>
 
 <script>
-/* ══════════════════════════════════════════════════
-   УТИЛІТА: розбір посилання на відео
-   Підтримує:
-     YouTube:  https://youtu.be/ID
-               https://www.youtube.com/watch?v=ID
-               https://www.youtube.com/embed/ID
-               просто ID (11 символів)
-     GDrive:   https://drive.google.com/file/d/ID/view
-               https://drive.google.com/open?id=ID
-               просто ID
-   ══════════════════════════════════════════════════ */
+/* ── Парсер відео-посилань ── */
 function parseVideoSource(cfg) {
   const { type, src } = cfg;
+
   if (type === 'local') {
     return { kind: 'local', url: src };
   }
+
   if (type === 'youtube') {
-    let id = src;
-    const m = src.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+    /* витягуємо ID з будь-якого формату yt-посилання */
+    let id = src.trim();
+    const m = id.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
     if (m) id = m[1];
+    /* залишаємо лише 11-символьний ID, відрізаємо ?si=... тощо */
+    id = id.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 11);
     return {
       kind: 'youtube',
-      embedUrl: `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&modestbranding=1&rel=0`,
-      modalUrl:  `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
+      /* фоновий iframe у hero: mute+autoplay+loop, controls=0 */
+      bgUrl:    `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1`,
+      /* модалка: autoplay без mute, з controls */
+      modalUrl: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
     };
   }
+
   if (type === 'gdrive') {
-    let id = src;
-    const m = src.match(/\/d\/([^/]+)/) || src.match(/id=([^&]+)/);
+    let id = src.trim();
+    const m = src.match(/\/d\/([^/?#]+)/) || src.match(/[?&]id=([^&]+)/);
     if (m) id = m[1];
     return {
       kind: 'gdrive',
-      // Google Drive не підтримує autoplay у фоні, тому hero bg не показуємо
+      bgUrl:    null,   /* GDrive не підтримує autoplay-фон */
       modalUrl: `https://drive.google.com/file/d/${id}/preview`
     };
   }
+
   return null;
 }
 
 const vidInfo = parseVideoSource(VIDEO_SOURCE);
 
-/* ── Hero background ── */
+/* ── Hero фонове відео ── */
 const hero = document.getElementById('projectHero');
 if (vidInfo) {
   if (vidInfo.kind === 'local') {
@@ -642,26 +604,33 @@ if (vidInfo) {
     s.src = vidInfo.url; s.type = 'video/mp4';
     v.appendChild(s);
     hero.insertBefore(v, hero.firstChild);
-  } else if (vidInfo.kind === 'youtube') {
-    // YouTube autoplay у фоні: додаємо iframe
+
+  } else if (vidInfo.kind === 'youtube' && vidInfo.bgUrl) {
+    /*
+      Для фонового YouTube-iframe треба allow="autoplay" і
+      youtube-nocookie щоб уникнути блокувань GDPR/CSP.
+      Важливо: GitHub Pages дозволяє iframe з youtube-nocookie.com.
+    */
     const f = document.createElement('iframe');
     f.className = 'hero-iframe-bg';
-    f.src = vidInfo.embedUrl;
-    f.allow = 'autoplay; encrypted-media';
+    f.src = vidInfo.bgUrl;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture';
     f.setAttribute('allowfullscreen', '');
+    f.setAttribute('title', 'Background video');
     hero.insertBefore(f, hero.firstChild);
   }
-  // gdrive — не підтримує autoplay-embed у фоні, просто тёмний фон
+  /* gdrive — просто темний фон, нічого не вставляємо */
 }
 
-/* ── Наповнення модального вікна ── */
+/* ── Модальне вікно: наповнення ── */
 const videoModalBody = document.getElementById('videoModalBody');
-let modalVideoEl   = null;  // <video> для локального файлу
-let modalIframeEl  = null;  // <iframe> для YT / GDrive
+let modalVideoEl  = null;
+let modalIframeEl = null;
 
-function buildModalContent() {
+(function buildModal() {
   videoModalBody.innerHTML = '';
   if (!vidInfo) return;
+
   if (vidInfo.kind === 'local') {
     const v = document.createElement('video');
     v.controls = true; v.preload = 'none';
@@ -670,18 +639,23 @@ function buildModalContent() {
     v.appendChild(s);
     modalVideoEl = v;
     videoModalBody.appendChild(v);
+
   } else {
+    /*
+      YouTube і GDrive: iframe.src залишається '' до відкриття —
+      щоб відео не стартувало у фоні.
+    */
     const f = document.createElement('iframe');
-    f.src = '';  // заповниться при відкритті
-    f.allow = 'autoplay; fullscreen; encrypted-media';
+    f.src = '';
+    f.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
     f.setAttribute('allowfullscreen', '');
+    f.setAttribute('title', 'Gameplay video');
     modalIframeEl = f;
     videoModalBody.appendChild(f);
   }
-}
-buildModalContent();
+})();
 
-/* ── Відкриття / закриття модалки ── */
+/* ── Відкриття/закриття модалки ── */
 const videoOverlay = document.getElementById('videoModal');
 
 function openVideoModal() {
@@ -689,10 +663,11 @@ function openVideoModal() {
   document.body.style.overflow = 'hidden';
   if (vidInfo && vidInfo.kind === 'local' && modalVideoEl) {
     modalVideoEl.play().catch(() => {});
-  } else if (modalIframeEl) {
+  } else if (modalIframeEl && vidInfo) {
     modalIframeEl.src = vidInfo.modalUrl;
   }
 }
+
 function closeVideoModal() {
   videoOverlay.classList.remove('open');
   document.body.style.overflow = '';
@@ -700,7 +675,7 @@ function closeVideoModal() {
     modalVideoEl.pause();
     modalVideoEl.currentTime = 0;
   } else if (modalIframeEl) {
-    // Зупиняємо відтворення, скидаючи src
+    /* обнуляємо src — зупиняє відтворення і вивантажує iframe */
     modalIframeEl.src = '';
   }
 }
@@ -711,25 +686,28 @@ videoOverlay.addEventListener('click', e => { if (e.target === videoOverlay) clo
 
 /* ── Scroll reveal ── */
 const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
 }, { threshold: 0.06 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-/* ── Screen images + lightbox data ── */
+/* ── Скриншоти: завантаження + дані для lightbox ── */
 const lightboxImages = [];
 
 document.querySelectorAll('.screen-item[data-img]').forEach((item, idx) => {
   const src = (item.getAttribute('data-img') || '').trim();
   if (!src) return;
-  lightboxImages.push({ src, el: item });
+  lightboxImages.push({ src });
+
   const img = new Image();
   img.className = 'screen-img';
   img.alt = '';
   img.onload  = () => { img.classList.add('loaded'); item.classList.add('has-img'); };
   img.onerror = () => { img.remove(); };
-  const label = item.querySelector('.screen-label');
-  item.insertBefore(img, label || null);
+  item.insertBefore(img, item.querySelector('.screen-label') || null);
   img.src = src;
+
   item.addEventListener('click', () => openLightbox(idx));
 });
 
@@ -764,7 +742,7 @@ function goTo(idx) {
   lbImg.classList.remove('visible');
   setTimeout(() => {
     lbImg.src = lightboxImages[lbIndex].src;
-    lbImg.onload = () => lbImg.classList.add('visible');
+    lbImg.onload  = () => lbImg.classList.add('visible');
     lbImg.onerror = () => lbImg.classList.add('visible');
     lbCurrent.textContent = lbIndex + 1;
     lbPrev.disabled = lbIndex === 0;
@@ -773,7 +751,7 @@ function goTo(idx) {
   }, 180);
 }
 function openLightbox(idx) {
-  if (lightboxImages.length === 0) return;
+  if (!lightboxImages.length) return;
   buildDots();
   lbIndex = idx;
   lbImg.src = '';
@@ -803,7 +781,7 @@ lbNext.addEventListener('click', e => { e.stopPropagation(); if (lbIndex < light
 
 document.addEventListener('keydown', e => {
   if (lb.classList.contains('open')) {
-    if (e.key === 'Escape')      closeLightbox();
+    if (e.key === 'Escape')     closeLightbox();
     if (e.key === 'ArrowLeft'  && lbIndex > 0)                         goTo(lbIndex - 1);
     if (e.key === 'ArrowRight' && lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1);
     return;
