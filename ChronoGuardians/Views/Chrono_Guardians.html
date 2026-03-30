@@ -488,9 +488,9 @@
     <div class="eyebrow">Внесок</div>
     <h2 class="block-title">Моя роль у проєкті<span class="title-bar"></span></h2>
     <div class="role-grid">
-      <div class="role-card reveal"><span class="role-tag">Lead Developer</span><div class="role-title">Архітектура та геймплей</div><div class="role-desc">Розробка ключових систем: хвилі ворогів, розміщення героїв, система навичок, State Machine для AI, ефекти та Object Pool.</div></div>
-      <div class="role-card reveal" style="transition-delay:0.08s"><span class="role-tag">Project Manager</span><div class="role-title">Координація команди</div><div class="role-desc">Планування спринтів, розподіл задач, code review, ведення документації та версіонування в Git / GitHub.</div></div>
-      <div class="role-card reveal" style="transition-delay:0.16s"><span class="role-tag">UI/UX Integrator</span><div class="role-title">Інтерфейс та UX</div><div class="role-desc">Дизайн екранів у Figma, верстка в Unity UGUI, анімації переходів, адаптивний HUD для різних роздільностей Android.</div></div>
+      <div class="role-card reveal"><span class="role-tag">Lead Developer</span><div class="role-title">Архітектура та геймплей</div><div class="role-desc">Розробка ігрових систем: хвилі ворогів, розміщення героїв, система навичок, AI ворогів і тд.</div></div>
+      <div class="role-card reveal" style="transition-delay:0.08s"><span class="role-tag">Project Manager</span><div class="role-title">Координація команди</div><div class="role-desc">Планування спринтів, розподіл задач, code review, ведення документації та версіонування в Unity DevOps version control.</div></div>
+      <div class="role-card reveal" style="transition-delay:0.16s"><span class="role-tag">UI/UX Integrator</span><div class="role-title">Інтерфейс та UX</div><div class="role-desc">Верстка в Unity UGUI, анімації переходів, адаптивний HUD для різних роздільностей Android мобільних платформ</div></div>
       <div class="role-card reveal" style="transition-delay:0.24s"><span class="role-tag">Level Designer</span><div class="role-title">Дизайн рівнів</div><div class="role-desc">Балансування хвиль ворогів, розробка карт і точок появи для кожної з шести епох. Тюнінг складності за аналізом плейтестів.</div></div>
     </div>
   </div>
@@ -507,8 +507,7 @@
       <div class="tech-item"><span class="tech-ico">✏️</span><div><div class="tech-name">Illustrator</div><div class="tech-cat">Векторна графіка</div></div></div>
       <div class="tech-item"><span class="tech-ico">📱</span><div><div class="tech-name">Android SDK</div><div class="tech-cat">Платформа</div></div></div>
       <div class="tech-item"><span class="tech-ico">💰</span><div><div class="tech-name">Unity IAP</div><div class="tech-cat">Монетизація</div></div></div>
-      <div class="tech-item"><span class="tech-ico">📢</span><div><div class="tech-name">AdMob</div><div class="tech-cat">Реклама</div></div></div>
-      <div class="tech-item"><span class="tech-ico">🔀</span><div><div class="tech-name">Git / GitHub</div><div class="tech-cat">Версіонування</div></div></div>
+      <div class="tech-item"><span class="tech-ico">🔀</span><div><div class="tech-name">Unity DevOps version control</div><div class="tech-cat">Версіонування</div></div></div>
     </div>
   </div>
 
@@ -518,22 +517,41 @@
     <div class="challenge-list">
       <div class="challenge-item reveal">
         <div class="challenge-num">01</div>
-        <div><div class="challenge-title">Продуктивність на слабких Android-пристроях</div><div class="challenge-desc">Гра з десятками Spine-анімацій і ворогів одночасно на екрані давала просадки на бюджетних пристроях.</div><div class="challenge-sol"><strong>Рішення:</strong> Впровадив Object Pooling для всіх ворогів і проджектайлів, динамічне вимкнення анімацій поза камерою, LOD через code-controlled skin switching. FPS виріс з 24 до стабільних 60 на target-девайсах.</div></div>
+        <div><div class="challenge-title">Продуктивність на слабких Android-пристроях</div><div class="challenge-desc">Гра з десятками Spine-анімацій і ворогів одночасно на екрані давала просадки на бюджетних пристроях.</div><div class="challenge-sol"><strong>Рішення:</strong> Оптимізація кількості об'єктів на сцені, зменшення якості ефектів і анімацій, відключення зайвих обчислень у Update, а також спрощення фізики та колізій для підвищення продуктивності. </div></div>
       </div>
       <div class="challenge-item reveal" style="transition-delay:0.08s">
-        <div class="challenge-num">02</div>
-        <div><div class="challenge-title">Балансування 24 типів ворогів по шести епохах</div><div class="challenge-desc">Вручну налаштовувати хвилі було неможливо — будь-яка правка ламала сусідні рівні.</div><div class="challenge-sol"><strong>Рішення:</strong> Розробив систему ScriptableObject-конфігів з Excel-to-SO імпортером. Баланс правиться в таблиці без змін у коді.</div></div>
-      </div>
+  <div class="challenge-num">02</div>
+  <div>
+    <div class="challenge-title">Динамічне спавнування ворогів по карті</div>
+    <div class="challenge-desc">
+      Потрібно було зробити, щоб вороги з’являлися не тільки за розкладом, а й випадково на різних спавнерах, без дублювання та конфліктів.
+    </div>
+    <div class="challenge-sol">
+      <strong>Рішення:</strong> Реалізував метод SpawnEnemyAtSpawner() та SpawnEnemiesRoutine() у GameManager, який обробляє як заплановані хвилі, так і автоспавн. Вороги отримують унікальний sortingOrder та стартову позицію, що дозволяє контролювати їхнє розташування на 2D-карті і легко тестувати різні сценарії.
+    </div>
+  </div>      
+</div>
       <div class="challenge-item reveal" style="transition-delay:0.16s">
-        <div class="challenge-num">03</div>
-        <div><div class="challenge-title">Spine + Unity UGUI: конфлікти Canvas</div><div class="challenge-desc">Spine-компоненти конфліктували з Canvas-рендером при відображенні героїв в UI-екранах.</div><div class="challenge-sol"><strong>Рішення:</strong> Перевів UI-превью героїв на окрему RenderTexture Camera з ізольованим шаром, результат відображається в RawImage — нуль конфліктів.</div></div>
-      </div>
-      <div class="challenge-item reveal" style="transition-delay:0.24s">
-        <div class="challenge-num">04</div>
-        <div><div class="challenge-title">Синхронізація команди та версіонування ассетів</div><div class="challenge-desc">Художник і дизайнер часто перезаписували ассети, що спричиняло merge-конфлікти Unity YAML-файлів.</div><div class="challenge-sol"><strong>Рішення:</strong> Налаштував Git LFS для бінарних ассетів, ввів конвенцію іменування файлів, перейшли на feature-гілки з обов'язковим review перед merge в main.</div></div>
-      </div>
+  <div class="challenge-num">03</div>
+  <div>
+    <div class="challenge-title">UI-карточки та відображення персонажів</div>
+    <div class="challenge-desc">Потрібно було відобразити персонажів на карточках UI без конфліктів із Canvas та не створювати дублікати об’єктів на сцені.</div>
+    <div class="challenge-sol">
+      <strong>Рішення:</strong> Використав DraggableCard і CardData для 2D-спрайтів персонажів. Кожна карточка ініціалізується через InitializeCardsUI() та відображає тільки потрібних персонажів без зайвих об’єктів на сцені.
     </div>
   </div>
+</div>
+
+<div class="challenge-item reveal" style="transition-delay:0.24s">
+  <div class="challenge-num">04</div>
+  <div>
+    <div class="challenge-title">Система спавну ворогів і контроль хвиль</div>
+    <div class="challenge-desc">Вороги спавнилися неконтрольовано, через що гравець міг пропустити критичну кількість ворогів та втратити рівень.</div>
+    <div class="challenge-sol">
+      <strong>Рішення:</strong> Реалізував SpawnEnemiesRoutine() у GameManager для поетапного та автоматичного спавну ворогів. Використав enemySpawnSchedule і прогрес-бар (Slider) для відображення хвиль, а також контроль знищених та пропущених ворогів для правильної перевірки завершення рівня.
+    </div>
+  </div>
+</div>
 
 </div>
 
