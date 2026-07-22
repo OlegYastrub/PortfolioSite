@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Sim — Mobile Car Damage Simulator — Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --dark: #0f0f0f;
+    --card: #141414;
+    --card2: #181818;
+    --border: #242424;
+    --red: #d92020;
+    --red-dim: #7a1212;
+    --red-glow: rgba(217,32,32,0.15);
+    --white: #f0f0f0;
+    --gray: #777;
+    --muted: #999;
+    --light: #c8c8c8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--red); }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 6vw;
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: 0.06em; color: var(--white); text-decoration: none; }
+  .nav-logo em { color: var(--red); font-style: normal; }
+  .nav-back { display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+  .nav-back:hover { color: var(--red); }
+  .nav-back .arr { font-size: 1rem; transition: transform 0.2s; display: inline-block; }
+  .nav-back:hover .arr { transform: translateX(-3px); }
+
+  .project-hero {
+    min-height: 72vh; display: flex; align-items: flex-end;
+    padding: 0 6vw 64px; position: relative; overflow: hidden; margin-top: 57px;
+  }
+  .hero-video-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0; pointer-events: none;
+  }
+  .hero-iframe-bg {
+    position: absolute; top: 50%; left: 50%;
+    width: 177.78vh; height: 100vh;
+    min-width: 100%; min-height: 56.25vw;
+    transform: translate(-50%, -50%);
+    z-index: 0; pointer-events: none; border: none;
+  }
+  .hero-bg-art {
+    position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(90deg, rgba(8,8,8,1) 0%, rgba(8,8,8,0.96) 22%, rgba(8,8,8,0.80) 38%, rgba(8,8,8,0.40) 56%, rgba(8,8,8,0.08) 75%, rgba(8,8,8,0) 100%),
+      linear-gradient(180deg, rgba(8,8,8,0.4) 0%, transparent 20%, transparent 60%, rgba(8,8,8,0.95) 100%);
+  }
+  .hero-grid { position: absolute; inset: 0; pointer-events: none; z-index: 2; background-image: linear-gradient(rgba(217,32,32,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(217,32,32,0.04) 1px, transparent 1px); background-size: 52px 52px; }
+  .hero-glow-1 { position: absolute; top: -10%; left: -5%; width: 600px; height: 600px; pointer-events: none; z-index: 2; background: radial-gradient(circle, rgba(217,32,32,0.10) 0%, transparent 65%); }
+  .hero-glow-2 { position: absolute; bottom: 0; right: 10%; width: 400px; height: 400px; pointer-events: none; z-index: 2; background: radial-gradient(circle, rgba(217,32,32,0.05) 0%, transparent 60%); }
+  .hero-deco { position: absolute; top: 50%; right: 7%; transform: translateY(-50%); opacity: 0.07; pointer-events: none; z-index: 3; }
+  .speed-ring { position: absolute; border-radius: 50%; border: 1px solid var(--red); }
+  .speed-ring:nth-child(1) { width: 340px; height: 340px; top: -170px; left: -170px; animation: slowSpin 30s linear infinite; }
+  .speed-ring:nth-child(2) { width: 240px; height: 240px; top: -120px; left: -120px; border-style: dashed; animation: slowSpin 20s linear infinite reverse; }
+  .speed-ring:nth-child(3) { width: 140px; height: 140px; top: -70px; left: -70px; animation: slowSpin 12s linear infinite; }
+  @keyframes slowSpin { to { transform: rotate(360deg); } }
+
+  .hero-content { position: relative; z-index: 4; max-width: 760px; }
+
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray); margin-bottom: 1.4rem; opacity: 0; animation: fadeUp 0.5s 0.1s forwards; }
+  .breadcrumb a { color: var(--gray); text-decoration: none; transition: color 0.2s; }
+  .breadcrumb a:hover { color: var(--red); }
+  .breadcrumb .sep { color: var(--red-dim); }
+
+  .project-badge-hero { display: inline-flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); border: 1px solid var(--red-dim); padding: 5px 13px; border-radius: 2px; margin-bottom: 1.2rem; background: rgba(217,32,32,0.06); opacity: 0; animation: fadeUp 0.5s 0.2s forwards; }
+  .project-badge-hero::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--red); box-shadow: 0 0 8px var(--red); animation: blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .project-title-hero { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(2.8rem, 6vw, 5.2rem); line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 1.2rem; opacity: 0; animation: fadeUp 0.5s 0.3s forwards; }
+  .project-title-hero .accent { color: var(--red); }
+
+  .project-tagline { font-size: 1rem; color: var(--light); margin-bottom: 2rem; max-width: 540px; font-weight: 400; line-height: 1.6; opacity: 0; animation: fadeUp 0.5s 0.45s forwards; }
+
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: center; opacity: 0; animation: fadeUp 0.5s 0.55s forwards; }
+  .meta-chip { display: flex; flex-direction: column; gap: 2px; }
+  .meta-chip .label { font-family: 'Outfit', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); }
+  .meta-chip .value { font-family: 'Outfit', sans-serif; font-size: 0.84rem; font-weight: 600; color: var(--white); }
+  .meta-chip .value.red { color: var(--red); }
+  .meta-sep { width: 1px; height: 36px; background: var(--border); }
+
+  .tag { font-family: 'Outfit', sans-serif; font-size: 0.63rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; background: rgba(217,32,32,0.07); border: 1px solid rgba(217,32,32,0.2); color: var(--red); border-radius: 2px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2.4rem; opacity: 0; animation: fadeUp 0.5s 0.65s forwards; }
+  .btn { font-family: 'Outfit', sans-serif; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; padding: 13px 26px; border-radius: 3px; transition: all 0.22s; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: none; }
+  .btn-primary { background: var(--red); color: var(--white); }
+  .btn-primary:hover { background: #b81a1a; transform: translateY(-2px); box-shadow: 0 10px 28px var(--red-glow); }
+  .btn-outline { background: transparent; color: var(--light); border: 1px solid var(--border); }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); transform: translateY(-2px); }
+
+  .video-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .video-modal-overlay.open { opacity: 1; pointer-events: all; }
+  .video-modal-inner {
+    position: relative; width: min(90vw, 1000px);
+    background: #0a0a0a; border: 1px solid var(--border);
+    box-shadow: 0 0 80px rgba(217,32,32,0.2);
+    transform: scale(0.93); transition: transform 0.3s ease;
+  }
+  .video-modal-overlay.open .video-modal-inner { transform: scale(1); }
+  .video-modal-inner::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dim), transparent); }
+  .video-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+  }
+  .video-modal-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); }
+  .video-modal-title em { color: var(--red); font-style: normal; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--gray); font-size: 1.3rem; line-height: 1; transition: color 0.2s; padding: 4px 8px; border-radius: 2px; }
+  .modal-close:hover { color: var(--red); }
+  .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden; }
+  .video-modal-body video,
+  .video-modal-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; }
+  .modal-esc-hint { padding: 10px 20px; font-family: 'Outfit', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--gray); text-align: right; }
+
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1100;
+    background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .lightbox.open { opacity: 1; pointer-events: all; }
+  .lb-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dim), transparent); }
+  .lb-header { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; }
+  .lb-counter { font-family: 'Outfit', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); }
+  .lb-counter em { color: var(--red); font-style: normal; }
+  .lb-close { background: none; border: 1px solid var(--border); cursor: pointer; color: var(--gray); font-size: 1rem; line-height: 1; transition: all 0.2s; padding: 6px 12px; border-radius: 2px; font-family: 'Outfit', sans-serif; font-weight: 600; letter-spacing: 0.08em; }
+  .lb-close:hover { border-color: var(--red); color: var(--red); }
+  .lb-stage { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 80px 100px; }
+  .lb-img { max-width: 100%; max-height: 100%; object-fit: contain; border: 1px solid var(--border); box-shadow: 0 0 60px rgba(217,32,32,0.12), 0 40px 80px rgba(0,0,0,0.8); opacity: 0; transform: scale(0.96); transition: opacity 0.25s ease, transform 0.25s ease; display: block; border-radius: 1px; }
+  .lb-img.visible { opacity: 1; transform: scale(1); }
+  .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(8,8,8,0.7); border: 1px solid var(--border); color: var(--gray); font-size: 1.2rem; cursor: pointer; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; border-radius: 2px; z-index: 2; }
+  .lb-arrow:hover { border-color: var(--red); color: var(--red); background: rgba(217,32,32,0.08); }
+  .lb-arrow.prev { left: 20px; }
+  .lb-arrow.next { right: 20px; }
+  .lb-arrow:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+  .lb-dots { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; align-items: center; }
+  .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gray); border: none; cursor: pointer; padding: 0; transition: all 0.2s; }
+  .lb-dot.active { background: var(--red); width: 20px; border-radius: 3px; }
+  .lb-dot:hover:not(.active) { background: var(--light); }
+  .lb-hint { position: absolute; bottom: 24px; right: 24px; font-family: 'Outfit', sans-serif; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); }
+
+  .screen-item { cursor: zoom-in !important; }
+  .screen-item .zoom-icon { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s; background: rgba(0,0,0,0.35); pointer-events: none; }
+  .screen-item:hover .zoom-icon { opacity: 1; }
+  .zoom-icon svg { width: 32px; height: 32px; stroke: var(--white); opacity: 0.85; }
+
+  .page-body { max-width: 1200px; margin: 0 auto; padding: 0 6vw 96px; }
+  .section-block { padding: 72px 0; border-top: 1px solid var(--border); }
+  .eyebrow { font-family: 'Outfit', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); margin-bottom: 0.5rem; }
+  .block-title { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 2rem; }
+  .title-bar { display: inline-block; width: 32px; height: 3px; background: var(--red); margin-left: 10px; vertical-align: middle; border-radius: 2px; }
+
+  .overview-grid { display: grid; grid-template-columns: 1fr 380px; gap: 5vw; align-items: start; }
+  .overview-text p { font-size: 0.9rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.9; }
+  .overview-text p strong { color: var(--white); font-weight: 600; }
+  .overview-text p em { color: var(--red); font-style: normal; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 2.5rem; }
+  .stat-box { background: var(--card); padding: 28px 20px; text-align: center; }
+  .stat-num { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--red); line-height: 1; margin-bottom: 0.3rem; }
+  .stat-lbl { font-size: 0.68rem; color: var(--gray); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'Outfit', sans-serif; }
+
+  .sidebar-card { background: var(--card); border: 1px solid var(--border); position: sticky; top: 80px; overflow: hidden; }
+  .sidebar-card::before { content: ''; display: block; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-dim), transparent); }
+  .sidebar-inner { padding: 30px 28px; }
+  .sidebar-row { padding: 14px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 3px; }
+  .sidebar-row:last-child { border-bottom: none; }
+  .sidebar-label { font-family: 'Outfit', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gray); }
+  .sidebar-value { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--light); }
+  .sidebar-value.red { color: var(--red); }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .feature-card { background: var(--card); padding: 32px 28px; position: relative; overflow: hidden; transition: background 0.3s; }
+  .feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--red); transition: width 0.4s; }
+  .feature-card:hover::before { width: 100%; }
+  .feature-card:hover { background: var(--card2); }
+  .feature-icon { font-size: 1.6rem; margin-bottom: 0.9rem; display: block; }
+  .feature-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.45rem; color: var(--white); }
+  .feature-desc { font-size: 0.81rem; color: var(--gray); line-height: 1.7; }
+
+  .screens-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .screen-item { aspect-ratio: 16/9; position: relative; overflow: hidden; transition: transform 0.3s; z-index: 1; background: var(--card); }
+  .screen-item:hover { transform: scale(1.03); z-index: 2; }
+  .s1 { background: linear-gradient(135deg, #1c0808, #0d0505); }
+  .s2 { background: linear-gradient(135deg, #0d0808, #1c0b08); }
+  .s3 { background: linear-gradient(135deg, #080d0d, #08100d); }
+  .s4 { background: linear-gradient(135deg, #0d0808, #0d0d0d); }
+  .s5 { background: linear-gradient(135deg, #080808, #140808); }
+  .s6 { background: linear-gradient(135deg, #0d0808, #1a0a0a); }
+
+  .screen-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: opacity 0.35s ease;
+  }
+
+  .screen-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .screen-img.loaded {
+    opacity: 1;
+  }
+
+  .screen-item.has-img .screen-placeholder {
+    opacity: 0;
+  }
+
+  .screen-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 12px;
+    z-index: 3;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    background: linear-gradient(0deg, rgba(8,8,8,0.92) 0%, transparent 100%);
+    text-align: center;
+  }
+  .ac { width: 48px; height: 48px; border: 2px solid rgba(217,32,32,0.5); transform: rotate(45deg); animation: cubeR 4s linear infinite; position: relative; }
+  .ac::before { content:''; position:absolute; inset:11px; border:2px solid rgba(217,32,32,0.2); }
+  @keyframes cubeR { to { transform: rotate(405deg); } }
+  .ar { position: relative; width: 60px; height: 60px; }
+  .ar div { position: absolute; border-radius: 50%; border: 2px solid transparent; }
+  .ar div:nth-child(1) { inset:0; border-color: rgba(217,32,32,0.5) transparent; animation: spin 3s linear infinite; }
+  .ar div:nth-child(2) { inset:14px; border-color: transparent rgba(217,32,32,0.3); animation: spin 2s linear infinite reverse; }
+  .ar div:nth-child(3) { inset:26px; border-color: rgba(217,32,32,0.6) transparent; animation: spin 1.5s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ap { display: flex; gap: 4px; align-items: flex-end; }
+  .ap span { width: 6px; background: rgba(217,32,32,0.5); border-radius: 3px 3px 0 0; animation: bar 1.2s ease-in-out infinite; }
+  .ap span:nth-child(1){height:28px;animation-delay:0s} .ap span:nth-child(2){height:42px;animation-delay:.15s} .ap span:nth-child(3){height:20px;animation-delay:.3s} .ap span:nth-child(4){height:50px;animation-delay:.1s} .ap span:nth-child(5){height:32px;animation-delay:.25s}
+  @keyframes bar { 0%,100%{opacity:0.4;transform:scaleY(0.6)} 50%{opacity:1;transform:scaleY(1)} }
+  .ad { width: 42px; height: 42px; background: rgba(217,32,32,0.1); border: 2px solid rgba(217,32,32,0.4); transform: rotate(45deg); animation: pd 2.5s ease-in-out infinite; }
+  @keyframes pd { 0%,100%{transform:rotate(45deg) scale(1);opacity:.7} 50%{transform:rotate(45deg) scale(1.15);opacity:1} }
+  .ah { font-family:'Outfit',sans-serif; font-weight:900; font-size:2.2rem; color:rgba(217,32,32,0.4); animation:psFade 2.5s ease-in-out infinite; }
+  @keyframes psFade { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:0.9;transform:scale(1.08)} }
+
+  .role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .role-card { background: var(--card); padding: 30px 26px; }
+  .role-tag { font-family: 'Outfit', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); margin-bottom: 0.6rem; display: block; }
+  .role-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; margin-bottom: 0.6rem; color: var(--white); }
+  .role-desc { font-size: 0.8rem; color: var(--gray); line-height: 1.7; }
+
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .tech-item { background: var(--card); padding: 22px 20px; display: flex; align-items: center; gap: 14px; transition: background 0.25s; }
+  .tech-item:hover { background: var(--card2); }
+  .tech-ico { font-size: 1.4rem; flex-shrink: 0; }
+  .tech-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--white); margin-bottom: 1px; }
+  .tech-cat { font-size: 0.68rem; color: var(--gray); }
+
+  .challenge-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .challenge-item { background: var(--card); padding: 28px; display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; transition: background 0.2s; }
+  .challenge-item:hover { background: var(--card2); }
+  .challenge-num { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.8rem; color: rgba(217,32,32,0.25); line-height: 1; padding-top: 2px; min-width: 44px; }
+  .challenge-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--white); margin-bottom: 0.4rem; }
+  .challenge-desc { font-size: 0.82rem; color: var(--gray); line-height: 1.7; }
+  .challenge-sol { margin-top: 0.6rem; font-size: 0.8rem; color: var(--light); padding-left: 12px; border-left: 2px solid var(--red); }
+  .challenge-sol strong { color: var(--red); font-weight: 600; }
+
+  .bottom-nav { border-top: 1px solid var(--border); padding: 2.5rem 6vw; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .bnav-item { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+  .bnav-item:hover .bnav-title { color: var(--red); }
+  .bnav-label { font-family: 'Outfit', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray); margin-bottom: 2px; }
+  .bnav-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--white); transition: color 0.2s; }
+  .bnav-arr { font-size: 1.2rem; color: var(--red); }
+
+  footer { padding: 28px 6vw; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .footer-copy { font-family: 'Outfit', sans-serif; font-size: 0.68rem; color: var(--gray); letter-spacing: 0.06em; }
+  .footer-copy em { color: var(--red); font-style: normal; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+    .overview-grid { grid-template-columns: 1fr; }
+    .sidebar-card { position: static; }
+    .screens-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .lb-arrow { width: 40px; height: 40px; font-size: 1rem; }
+    .lb-stage { padding: 70px 60px; }
+  }
+
+  @media (max-width: 580px) {
+    .project-hero { padding-bottom: 48px; }
+    .screens-grid {
+      grid-template-columns: 1fr;
+    }
+    .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .bottom-nav { flex-direction: column; align-items: flex-start; }
+    .meta-sep { display: none; }
+    .hero-deco { display: none; }
+    .lb-stage { padding: 60px 16px; }
+    .lb-arrow { width: 36px; height: 36px; }
+    .lb-arrow.prev { left: 6px; }
+    .lb-arrow.next { right: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  НАЛАШТУВАННЯ ВІДЕО — міняй тільки тут                          ║
+  ║                                                                  ║
+  ║  Локальний файл:                                                 ║
+  ║    type: 'local',  src: 'Video/CarSim.mp4'                       ║
+  ║                                                                  ║
+  ║  YouTube (будь-який формат посилання або просто ID):             ║
+  ║    type: 'youtube', src: 'https://youtu.be/_Vw1coHl1_c'         ║
+  ║    type: 'youtube', src: '_Vw1coHl1_c'                          ║
+  ║                                                                  ║
+  ║  Google Drive (файл має бути "Всім, хто має посилання"):         ║
+  ║    type: 'gdrive',  src: 'https://drive.google.com/file/d/ID/view'
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<script>
+  const BACKGROUND_SOURCE = {
+    type: 'image',           // Можливі значення: 'image', 'local', 'youtube', 'gdrive'
+    src: '../Images/Poster.png'   // Шлях до зображення або відео
+};
+</script>
+
+<!-- VIDEO MODAL -->
+<div class="video-modal-overlay" id="videoModal">
+  <div class="video-modal-inner">
+    <div class="video-modal-header">
+      <div class="video-modal-title">Car <em>Sim</em> — Геймплей відео</div>
+      <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
+    </div>
+    <div class="video-modal-body" id="videoModalBody"></div>
+    <div class="modal-esc-hint">ESC — закрити</div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Перегляд зображення">
+  <div class="lb-bar"></div>
+  <div class="lb-header">
+    <div class="lb-counter">Скриншот <em id="lbCurrent">1</em> / <span id="lbTotal">6</span></div>
+    <button class="lb-close" id="lbClose">ESC закрити</button>
+  </div>
+  <div class="lb-stage" id="lbStage">
+    <button class="lb-arrow prev" id="lbPrev" aria-label="Попереднє">←</button>
+    <img class="lb-img" id="lbImg" src="" alt="Screenshot" draggable="false">
+    <button class="lb-arrow next" id="lbNext" aria-label="Наступне">→</button>
+  </div>
+  <div class="lb-dots" id="lbDots"></div>
+  <div class="lb-hint">← → клавіші для навігації</div>
+</div>
+
+<nav>
+  <a href="../../index.html" class="nav-logo">UNITY<em>.</em>DEV</a>
+  <a href="../../index.html#projects" class="nav-back"><span class="arr">←</span> Всі проєкти</a>
+</nav>
+
+<div class="project-hero" id="projectHero">
+  <div class="hero-bg-art"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-deco">
+    <div class="speed-ring"></div>
+    <div class="speed-ring"></div>
+    <div class="speed-ring"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="breadcrumb">
+      <a href="../../index.html">Портфоліо</a><span class="sep">/</span>
+      <a href="../../index.html#projects">Проєкти</a><span class="sep">/</span>
+      Car Sim
+    </div>
+
+    <div class="project-badge-hero">3D Mobile Game</div>
+
+    <h1 class="project-title-hero">
+      Car <span class="accent">Sim</span>
+    </h1>
+
+    <p class="project-tagline">
+            Пориньте у світ швидкості та видовищних аварій! Це сучасний 3D car-симулятор для Мобільних платформ, розроблений на Unity, який дарує повну свободу водіння. Керуйте десятками реалістичних автомобілів, дрифтуйте, розганяйтеся на повну, тестуйте міцність машин у масштабних зіткненнях і спостерігайте за деталізованою деформацією кузова в реальному часі. Великий вибір авто, стильний гараж та інтуїтивне сенсорне керування роблять кожну поїздку захопливою та незабутньою.
+
+    </p>
+
+    <div class="hero-meta">
+      <div class="meta-chip">
+        <span class="label">Жанр</span>
+        <span class="value">Car Simulation</span>
+      </div>
+
+      <div class="meta-sep"></div>
+
+      <div class="meta-chip">
+        <span class="label">Платформа</span>
+        <span class="value">Mobile</span>
+      </div>
+
+      <div class="meta-sep"></div>
+
+      <div class="meta-chip">
+        <span class="label">Двигун</span>
+        <span class="value">Unity 3D</span>
+      </div>
+
+      <div class="meta-sep"></div>
+
+      <div class="meta-chip">
+        <span class="label">Статус</span>
+        <span class="value red">● Під замовлення</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-body">
+
+ <div class="section-block">
+  <div class="eyebrow">Огляд проєкту</div>
+  <h2 class="block-title">Про гру<span class="title-bar"></span></h2>
+
+  <div class="overview-grid">
+
+    <div class="overview-text reveal">
+      <p>
+        <strong>Car Sim</strong> - 3D мобільний car-симулятор, створений у Unity для Android та iOS. У межах розробки проєкту було реалізовано повноцінну систему керування автомобілем, інтегровано та налаштовано нові автомобілі, а також створено й доопрацьовано ігрові локації. Гра пропонує вільне керування реалістичними автомобілями з фізичною деформацією кузова в реальному часі, дозволяючи гравцям розганятися, дрифтувати, виконувати різноманітні маневри та взаємодіяти з оточенням.
+      </p>
+
+      <p>
+        У грі реалізована фізика коліс на основі WheelCollider, деформація
+        кузова в реальному часі залежно від сили удару, дуже великий гараж
+        із десятками автомобілів різних класів, сенсорне керування
+        (кнопки газу/гальма, кермо-джойстик, нахил пристрою),
+        система збережень прогресу та HUD зі швидкістю й обертами двигуна.
+        Проєкт став практикою оптимізації vehicle-фізики та пошкоджень
+        саме під продуктивність мобільних пристроїв.
+      </p>
+
+      <div class="stats-row reveal" style="transition-delay:0.1s">
+        <div class="stat-box">
+          <div class="stat-num">30+</div>
+          <div class="stat-lbl">Автомобілів у гаражі</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-num">100%</div>
+          <div class="stat-lbl">Фізичні пошкодження</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-num">3</div>
+          <div class="stat-lbl">Схеми керування</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-num">10+</div>
+          <div class="stat-lbl">Gameplay систем</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card reveal" style="transition-delay:0.15s">
+      <div class="sidebar-inner">
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Команда розробників</span>
+          <span class="sidebar-value">Solo</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Моя роль</span>
+          <span class="sidebar-value">
+            Программування авто, допрацювання 3д моделей, оптимізація під мобільні пристрої
+          </span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Тривалість</span>
+          <span class="sidebar-value">Навчальний процес</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Платформа</span>
+          <span class="sidebar-value">Android / iOS</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Двигун</span>
+          <span class="sidebar-value">Unity 2022.3.59f1</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Жанр</span>
+          <span class="sidebar-value">Car Simulation</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Статус</span>
+          <span class="sidebar-value red">● Навчальний проєкт</span>
+        </div>
+
+        <div class="sidebar-row">
+          <span class="sidebar-label">Теги</span>
+
+          <div class="tag-row" style="margin-top:6px">
+            <span class="tag">Unity 3D</span>
+            <span class="tag">C#</span>
+            <span class="tag">Mobile</span>
+            <span class="tag">Vehicle Physics</span>
+            <span class="tag">Damage System</span>
+            <span class="tag">Touch Controls</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+ <div class="section-block">
+  <div class="eyebrow">Функціонал</div>
+  <h2 class="block-title">Ключові механіки<span class="title-bar"></span></h2>
+
+  <div class="feature-grid">
+
+    <div class="feature-card reveal">
+      <span class="feature-icon">🚗</span>
+      <div class="feature-name">Реалістична фізика авто</div>
+      <div class="feature-desc">
+        Поведінка машини на основі WheelCollider, адаптована під мобільні
+        пристрої: зчеплення з дорогою, підвіска, занос, гальмування —
+        без втрати продуктивності на слабшому залізі.
+      </div>
+    </div>
+
+    <div class="feature-card reveal" style="transition-delay:0.07s">
+      <span class="feature-icon">💥</span>
+      <div class="feature-name">Фізичні пошкодження кузова</div>
+      <div class="feature-desc">
+        Деформація кузова в реальному часі залежно від сили та кута удару,
+        відлітання деталей, іскри та ефекти зіткнень —
+        ключова механіка гри.
+      </div>
+    </div>
+
+    <div class="feature-card reveal" style="transition-delay:0.14s">
+      <span class="feature-icon">🏁</span>
+      <div class="feature-name">Величезний гараж авто</div>
+      <div class="feature-desc">
+        Дуже великий вибір автомобілів різних класів — від міських
+        хетчбеків до спорткарів і позашляховиків, кожен зі своїми
+        характеристиками швидкості, керованості та маси.
+      </div>
+    </div>
+
+    <div class="feature-card reveal" style="transition-delay:0.21s">
+      <span class="feature-icon">📱</span>
+      <div class="feature-name">Сенсорне керування</div>
+      <div class="feature-desc">
+        Керування повністю під touch-екран: віртуальні кнопки газу
+        й гальма, кермо-джойстик або керування нахилом пристрою —
+        на вибір гравця.
+      </div>
+    </div>
+
+    <div class="feature-card reveal" style="transition-delay:0.28s">
+      <span class="feature-icon">🎥</span>
+      <div class="feature-name">Системи камер</div>
+      <div class="feature-desc">
+        Декілька режимів огляду: від третьої особи, з капота
+        та від першої особи в салоні, з плавним переходом
+        та динамічним слідкуванням за машиною.
+      </div>
+    </div>
+
+    <div class="feature-card reveal" style="transition-delay:0.35s">
+      <span class="feature-icon">📊</span>
+      <div class="feature-name">HUD та налаштування</div>
+      <div class="feature-desc">
+        Спідометр, індикатор пошкоджень, меню налаштувань керування
+        та графіки, а також система збереження прогресу
+        й обраного автомобіля.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <div class="section-block">
+    <div class="eyebrow">Візуали</div>
+    <h2 class="block-title">Скриншоти<span class="title-bar"></span></h2>
+    <div class="screens-grid reveal">
+      <div class="screen-item s1" data-img="../Images/GamePlay1.png">
+        <div class="screen-placeholder"><div class="ac"></div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+      <div class="screen-item s2" data-img="../Images/GamePlay2.png">
+        <div class="screen-placeholder"><div class="ar"><div></div><div></div><div></div></div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+      <div class="screen-item s3" data-img="../Images/GamePlay3.png">
+        <div class="screen-placeholder"><div class="ap"><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+      <div class="screen-item s4" data-img="../Images/GamePlay4.png">
+        <div class="screen-placeholder"><div class="ad"></div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+      <div class="screen-item s5" data-img="../Images/GamePlay5.png">
+        <div class="screen-placeholder"><div class="ah">🏎️</div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+      <div class="screen-item s6" data-img="../Images/GamePlay6.png">
+        <div class="screen-placeholder"><div class="ac" style="border-color:rgba(200,170,50,0.5)"></div></div>
+        <div class="zoom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-block">
+  <div class="eyebrow">Внесок</div>
+  <h2 class="block-title">Моя роль у проєкті<span class="title-bar"></span></h2>
+
+  <div class="role-grid">
+
+    <div class="role-card reveal">
+      <span class="role-tag">Solo Developer</span>
+      <div class="role-title">Vehicle-фізика та пошкодження</div>
+      <div class="role-desc">
+        Повна розробка системи фізики автомобіля на основі WheelCollider
+        та системи деформації кузова в реальному часі,
+        оптимізованої під мобільні пристрої.
+      </div>
+    </div>
+
+    <div class="role-card reveal" style="transition-delay:0.08s">
+      <span class="role-tag">Mobile Programmer</span>
+      <div class="role-title">Архітектура та оптимізація</div>
+      <div class="role-desc">
+        Побудова структури Unity-проєкту, менеджерів гри,
+        логіки великого гаража, збережень
+        та оптимізація продуктивності під Android/iOS.
+      </div>
+    </div>
+
+    <div class="role-card reveal" style="transition-delay:0.16s">
+      <span class="role-tag">UI/UX Developer</span>
+      <div class="role-title">Сенсорний інтерфейс</div>
+      <div class="role-desc">
+        Реалізація головного меню, гаража з великим переліком авто,
+        віртуальних кнопок керування, кермо-джойстика
+        та HUD, адаптованого під різні розміри екранів.
+      </div>
+    </div>
+
+    <div class="role-card reveal" style="transition-delay:0.24s">
+      <span class="role-tag">Level Designer</span>
+      <div class="role-title">Локація для катання</div>
+      <div class="role-desc">
+        Побудова відкритої локації з перешкодами та об’єктами
+        для зіткнень, розміщення декорацій
+        з урахуванням продуктивності на мобільних пристроях.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+ <div class="section-block">
+  <div class="eyebrow">Технології</div>
+  <h2 class="block-title">Стек<span class="title-bar"></span></h2>
+
+  <div class="tech-grid reveal">
+
+    <div class="tech-item">
+      <span class="tech-ico">🎮</span>
+      <div>
+        <div class="tech-name">Unity 3D</div>
+        <div class="tech-cat">Ігровий двигун</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">⌨️</span>
+      <div>
+        <div class="tech-name">C#</div>
+        <div class="tech-cat">Програмування ігрової логіки</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">🛞</span>
+      <div>
+        <div class="tech-name">WheelCollider</div>
+        <div class="tech-cat">Фізика коліс та підвіски</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">💥</span>
+      <div>
+        <div class="tech-name">Mesh Deformation</div>
+        <div class="tech-cat">Пошкодження кузова</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">📱</span>
+      <div>
+        <div class="tech-name">Android / iOS</div>
+        <div class="tech-cat">Мобільна платформа</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">👆</span>
+      <div>
+        <div class="tech-name">Unity Input System</div>
+        <div class="tech-cat">Сенсорне керування</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">💾</span>
+      <div>
+        <div class="tech-name">JSON</div>
+        <div class="tech-cat">Система збережень</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">⚙️</span>
+      <div>
+        <div class="tech-name">Unity UI System</div>
+        <div class="tech-cat">Інтерфейс (HUD / гараж)</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">🔀</span>
+      <div>
+        <div class="tech-name">Unity Version Control</div>
+        <div class="tech-cat">Контроль версій</div>
+      </div>
+    </div>
+
+    <div class="tech-item">
+      <span class="tech-ico">🧠</span>
+      <div>
+        <div class="tech-name">Game Architecture</div>
+        <div class="tech-cat">Структура проєкту</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <div class="section-block">
+    <div class="eyebrow">Досвід</div>
+    <h2 class="block-title">Виклики та рішення<span class="title-bar"></span></h2>
+    <div class="challenge-list">
+
+      <div class="challenge-item reveal">
+        <div class="challenge-num">01</div>
+        <div>
+          <div class="challenge-title">Фізика пошкоджень без падіння FPS</div>
+          <div class="challenge-desc">
+            Деформація мешу кузова в реальному часі при кожному зіткненні
+            сильно навантажувала слабші мобільні пристрої.
+          </div>
+          <div class="challenge-sol">
+            <strong>Рішення:</strong> Обмежив кількість вершин, що деформуються, за раз,
+            спростив колайдери пошкоджень і виніс важкі розрахунки за межі основного потоку.
+          </div>
+        </div>
+      </div>
+
+      <div class="challenge-item reveal" style="transition-delay:0.08s">
+        <div class="challenge-num">02</div>
+        <div>
+          <div class="challenge-title">Керування на сенсорному екрані</div>
+          <div class="challenge-desc">
+            Класична схема керування клавіатурою погано переносилась
+            на touch-екран: газ, гальмо і поворот потребували інтуїтивних елементів.
+          </div>
+          <div class="challenge-sol">
+            <strong>Рішення:</strong> Реалізував віртуальний джойстик керма
+            та великі кнопки газу/гальма з тактильним відгуком і опцією керування нахилом.
+          </div>
+        </div>
+      </div>
+
+      <div class="challenge-item reveal" style="transition-delay:0.16s">
+        <div class="challenge-num">03</div>
+        <div>
+          <div class="challenge-title">Великий гараж і пам'ять пристрою</div>
+          <div class="challenge-desc">
+            Десятки унікальних автомобілів з окремими моделями та текстурами
+            створювали ризик перевищення ліміту пам'яті на мобільних пристроях.
+          </div>
+          <div class="challenge-sol">
+            <strong>Рішення:</strong> Впровадив асинхронне завантаження машин через Addressables,
+            стиснення текстур під мобільні платформи та спільні матеріали між моделями.
+          </div>
+        </div>
+      </div>
+
+      <div class="challenge-item reveal" style="transition-delay:0.24s">
+        <div class="challenge-num">04</div>
+        <div>
+          <div class="challenge-title">Стабільна фізика на різних пристроях</div>
+          <div class="challenge-desc">
+            Різна продуктивність Android-пристроїв призводила до нестабільної
+            поведінки WheelCollider при низькому та нерівному FPS.
+          </div>
+          <div class="challenge-sol">
+            <strong>Рішення:</strong> Перевів фізику на Fixed Timestep з окремим циклом
+            оновлення, незалежним від частоти кадрів рендеру.
+          </div>
+        </div>
+      </div>
+
+      <div class="challenge-item reveal" style="transition-delay:0.32s">
+        <div class="challenge-num">05</div>
+        <div>
+          <div class="challenge-title">Оптимізація локації для катання</div>
+          <div class="challenge-desc">
+            Відкрита локація з деталізованим оточенням створювала
+            навантаження на слабких мобільних GPU.
+          </div>
+          <div class="challenge-sol">
+            <strong>Рішення:</strong> Застосував LOD-групи, occlusion culling,
+            запечене освітлення та об'єднання статичних об'єктів для стабільного FPS.
+          </div>
+        </div>
+      </div>
+
+    </div>
+</div>
+
+</div>
+
+<!--<div class="bottom-nav">
+  <a href="../../AviatorDash/Views/Aviator_Dash.html" class="bnav-item">
+    <span class="bnav-arr">←</span>
+    <div><div class="bnav-label">Назад</div><div class="bnav-title">Aviator Dash</div></div>
+  </a>
+  <a href="../../SkyBuild/Views/Sky_Build.html" class="bnav-item">
+    <div style="text-align:right"><div class="bnav-label">Незабаром</div><div class="bnav-title">Sky Build</div></div>
+    <span class="bnav-arr">→</span>
+  </a>
+</div>-->
+
+<footer>
+  <div class="footer-copy">© 2026 Oleh Maliutin — <em>Unity Developer</em></div>
+</footer>
+
+<script>
+/* ================================================
+   ПАРСЕР ДЖЕРЕЛА ФОНУ
+   ================================================ */
+function parseBackgroundSource(cfg) {
+    if (!cfg || !cfg.type || !cfg.src) return null;
+
+    const { type, src } = cfg;
+
+    if (type === 'image') {
+        return {
+            kind: 'image',
+            url: src
+        };
+    }
+
+    if (type === 'local') {
+        return {
+            kind: 'local',
+            url: src
+        };
+    }
+
+    if (type === 'youtube') {
+        let id = src.trim();
+        const match = id.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+        if (match) id = match[1];
+        id = id.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 11);
+
+        return {
+            kind: 'youtube',
+            bgUrl: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1`,
+            modalUrl: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
+        };
+    }
+
+    if (type === 'gdrive') {
+        let id = src.trim();
+        const match = src.match(/\/d\/([^/?#]+)/) || src.match(/[?&]id=([^&]+)/);
+        if (match) id = match[1];
+        return {
+            kind: 'gdrive',
+            bgUrl: null,
+            modalUrl: `https://drive.google.com/file/d/${id}/preview`
+        };
+    }
+
+    return null;
+}
+
+const bgInfo = parseBackgroundSource(BACKGROUND_SOURCE);
+
+/* ================================================
+   НАЛАШТУВАННЯ ФОНУ В HERO
+   ================================================ */
+function setupHeroBackground() {
+    const hero = document.getElementById('projectHero');
+    if (!hero || !bgInfo) return;
+
+    hero.querySelectorAll('.hero-video-bg, .hero-iframe-bg, .hero-image-bg').forEach(el => el.remove());
+
+    if (bgInfo.kind === 'image') {
+        const img = document.createElement('img');
+        img.src = bgInfo.url;
+        img.className = 'hero-video-bg';
+        img.style.objectFit = 'cover';
+        img.alt = '';
+        hero.prepend(img);
+
+    } else if (bgInfo.kind === 'local') {
+        const video = document.createElement('video');
+        video.className = 'hero-video-bg';
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.style.objectFit = 'cover';
+
+        const source = document.createElement('source');
+        source.src = bgInfo.url;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        hero.prepend(video);
+
+    } else if (bgInfo.kind === 'youtube' && bgInfo.bgUrl) {
+        const iframe = document.createElement('iframe');
+        iframe.className = 'hero-iframe-bg';
+        iframe.src = bgInfo.bgUrl;
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('title', 'Background video');
+        hero.prepend(iframe);
+    }
+}
+
+/* ================================================
+   МОДАЛЬНЕ ВІКНО ДЛЯ ВІДЕО
+   ================================================ */
+const vidInfo = parseBackgroundSource(BACKGROUND_SOURCE);
+
+let modalVideoEl = null;
+let modalIframeEl = null;
+
+function buildVideoModal() {
+    const videoModalBody = document.getElementById('videoModalBody');
+    if (!videoModalBody || !vidInfo) return;
+
+    videoModalBody.innerHTML = '';
+
+    if (vidInfo.kind === 'local') {
+        const v = document.createElement('video');
+        v.controls = true;
+        v.preload = 'none';
+        const s = document.createElement('source');
+        s.src = vidInfo.url;
+        s.type = 'video/mp4';
+        v.appendChild(s);
+        modalVideoEl = v;
+        videoModalBody.appendChild(v);
+
+    } else if (vidInfo.kind === 'youtube' || vidInfo.kind === 'gdrive') {
+        const f = document.createElement('iframe');
+        f.src = '';
+        f.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+        f.setAttribute('allowfullscreen', '');
+        f.setAttribute('title', 'Gameplay video');
+        modalIframeEl = f;
+        videoModalBody.appendChild(f);
+    }
+}
+
+function openVideoModal() {
+    const overlay = document.getElementById('videoModal');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    if (vidInfo.kind === 'local' && modalVideoEl) {
+        modalVideoEl.play().catch(() => {});
+    } else if (modalIframeEl && vidInfo.modalUrl) {
+        modalIframeEl.src = vidInfo.modalUrl;
+    }
+}
+
+function closeVideoModal() {
+    const overlay = document.getElementById('videoModal');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+
+    if (vidInfo.kind === 'local' && modalVideoEl) {
+        modalVideoEl.pause();
+        modalVideoEl.currentTime = 0;
+    } else if (modalIframeEl) {
+        modalIframeEl.src = '';
+    }
+}
+
+/* ================================================
+   LIGHTBOX ДЛЯ СКРИНШОТІВ
+   ================================================ */
+const lightboxImages = [];
+
+function initLightbox() {
+    document.querySelectorAll('.screen-item[data-img]').forEach((item, idx) => {
+        const src = item.getAttribute('data-img')?.trim();
+        if (!src) return;
+
+        lightboxImages.push({ src });
+
+        const img = new Image();
+        img.className = 'screen-img';
+        img.alt = '';
+        img.onload = () => {
+            img.classList.add('loaded');
+            item.classList.add('has-img');
+        };
+        img.onerror = () => img.remove();
+        item.insertBefore(img, item.querySelector('.screen-label') || null);
+        img.src = src;
+
+        item.addEventListener('click', () => openLightbox(idx));
+    });
+}
+
+let lbIndex = 0;
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCurrent = document.getElementById('lbCurrent');
+const lbTotal = document.getElementById('lbTotal');
+const lbDotsEl = document.getElementById('lbDots');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+const lbClose = document.getElementById('lbClose');
+
+function buildDots() {
+    lbDotsEl.innerHTML = '';
+    lbTotal.textContent = lightboxImages.length;
+    lightboxImages.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = `lb-dot ${i === 0 ? 'active' : ''}`;
+        d.addEventListener('click', () => goTo(i));
+        lbDotsEl.appendChild(d);
+    });
+}
+
+function updateDots() {
+    lbDotsEl.querySelectorAll('.lb-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === lbIndex)
+    );
+}
+
+function goTo(idx) {
+    lbIndex = idx;
+    lbImg.classList.remove('visible');
+    setTimeout(() => {
+        lbImg.src = lightboxImages[lbIndex].src;
+        lbImg.onload = () => lbImg.classList.add('visible');
+        lbCurrent.textContent = lbIndex + 1;
+        lbPrev.disabled = lbIndex === 0;
+        lbNext.disabled = lbIndex === lightboxImages.length - 1;
+        updateDots();
+    }, 180);
+}
+
+function openLightbox(idx) {
+    if (!lightboxImages.length) return;
+    buildDots();
+    lbIndex = idx;
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => goTo(idx), 50);
+}
+
+function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+        lbImg.src = '';
+        lbImg.classList.remove('visible');
+    }, 300);
+}
+
+/* ================================================
+   ІНІЦІАЛІЗАЦІЯ ВСЬОГО
+   ================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+    setupHeroBackground();
+    buildVideoModal();
+    initLightbox();
+
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.06 });
+
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    const videoOverlay = document.getElementById('videoModal');
+    document.getElementById('modalClose').addEventListener('click', closeVideoModal);
+    videoOverlay.addEventListener('click', e => {
+        if (e.target === videoOverlay) closeVideoModal();
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+    lb.addEventListener('click', e => {
+        if (e.target === lb || e.target === document.getElementById('lbStage')) closeLightbox();
+    });
+    lbPrev.addEventListener('click', e => {
+        e.stopPropagation();
+        if (lbIndex > 0) goTo(lbIndex - 1);
+    });
+    lbNext.addEventListener('click', e => {
+        e.stopPropagation();
+        if (lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (lb.classList.contains('open')) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft' && lbIndex > 0) goTo(lbIndex - 1);
+            if (e.key === 'ArrowRight' && lbIndex < lightboxImages.length - 1) goTo(lbIndex + 1);
+            return;
+        }
+        if (videoOverlay.classList.contains('open') && e.key === 'Escape') {
+            closeVideoModal();
+        }
+    });
+});
+</script>
+</body>
+</html>
